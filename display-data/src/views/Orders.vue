@@ -8,7 +8,7 @@
         <input
           id="searchbar"
           class="form-control col-sm-10"
-          v-model="filters.name.value"
+          v-model="filterValue"
         />
       </div>
     </div>
@@ -23,39 +23,11 @@
       <datepicker class="end-date" v-model="endDate" placeholder="End date" />
     </form>
 
-    <v-table
-      :data="filteredDate"
-      :filters="filters"
-      :currentPage.sync="currentPage"
-      :pageSize="5"
-      @totalPagesChanged="totalPages = $event"
-      class="table table-striped table-borderes"
-    >
-      <thead slot="head">
-        <tr>
-          <th>Order Name</th>
-          <th>Customer Name</th>
-          <th>Customer Company</th>
-          <v-th :customSort="dateSort">Order date</v-th>
-          <th>Delivered Amount</th>
-          <th>Total Amount</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody slot="body" slot-scope="{ displayData }">
-        <tr v-for="row in displayData" :key="row.id">
-          <td>{{ row.order_name }}</td>
-          <td>{{ row.customer.name }}</td>
-          <td>{{ row.customer.company.company_name }}</td>
-          <td>{{ row.created_at | date }}</td>
-          <td></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </v-table>
-    <smart-pagination
-      :currentPage.sync="currentPage"
-      :totalPages="totalPages"
+    <order-table
+      :orders="$store.state.order.orders"
+      :startDate="startDate"
+      :endDate="endDate"
+      :filteredValue="filterValue"
     />
   </div>
 </template>
@@ -64,26 +36,17 @@
 import store from '@/store'
 import { mapState } from 'vuex'
 import Datepicker from 'vuejs-datepicker'
+import OrderTable from '@/components/OrderTable.vue'
 import _ from 'lodash'
 
 export default {
   components: {
-    Datepicker
+    Datepicker,
+    OrderTable
   },
   data() {
     return {
-      filters: {
-        name: {
-          value: '',
-          keys: [
-            'customer.name',
-            'order_name',
-            'customer.company.company_name',
-            'created_at'
-          ]
-        },
-        date: { value: { min: '', max: '' }, custom: this.dateFilter }
-      },
+      filterValue: '',
       currentPage: 1,
       totalPages: 0,
       startDate: null,
@@ -100,12 +63,6 @@ export default {
 
       return date1 - date2
     }
-    // dateFilter(filterValue, row) {
-    //   let date = new Date(row.created_at).getTime()
-    //   let minDate = new Date(filterValue.min).getTime()
-    //   let maxDate = new Date(filterValue.max).getTime()
-    //   return date >= minDate && date <= maxDate
-    // }
   },
   computed: {
     ...mapState(['order']),
