@@ -7,18 +7,14 @@
       <input
         id="searchbar"
         class="form-control col-sm-10"
-        v-model="filters.name.value"
+        @input="$emit('input', $event.target.value)"
       />
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    filters: String
-  }
-}
+export default {}
 </script>
 
 <style lang="scss" scoped></style>

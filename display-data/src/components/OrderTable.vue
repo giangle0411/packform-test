@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-table
-      :data="filteredDate"
+      :data="filteredData"
       :filters="filters"
       :currentPage.sync="currentPage"
       :pageSize="5"
@@ -24,8 +24,8 @@
           <td>{{ row.customer.name }}</td>
           <td>{{ row.customer.company.company_name }}</td>
           <td>{{ row.created_at | date }}</td>
-          <td>{{ deliveries_amount(row) }}</td>
-          <td>{{ total_amount(row) }}</td>
+          <td>{{ deliveried_amount(row) | currency }}</td>
+          <td>{{ total_amount(row) | currency }}</td>
         </tr>
       </tbody>
     </v-table>
@@ -43,13 +43,13 @@ export default {
     orders: Array,
     startDate: Date,
     endDate: Date,
-    filteredValue: String
+    searchValue: String
   },
   data() {
     return {
       filters: {
         search: {
-          value: this.filteredValue,
+          value: this.searchValue,
           keys: [
             'customer.name',
             'order_name',
@@ -69,21 +69,18 @@ export default {
 
       return date1 - date2
     },
-    deliveries_amount(order) {
+    deliveried_amount(order) {
       let total = 0
       let order_items = order.order_items
       for (var i = 0; i < order_items.length; i++) {
-        let deliveries = order_items[i].deliveries
-        for (var j = 0; j < deliveries.length; j++) {
+        let deliveried = order_items[i].deliveries
+        for (var j = 0; j < deliveried.length; j++) {
           total +=
-            deliveries[j].delivered_quantity * order_items[i].price_per_unit
+            deliveried[j].delivered_quantity * order_items[i].price_per_unit
         }
       }
       if (total) {
-        return total.toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        })
+        return total
       }
       return '-'
     },
@@ -94,16 +91,13 @@ export default {
         total += order_items[i].quantity * order_items[i].price_per_unit
       }
       if (total) {
-        return total.toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        })
+        return total
       }
       return '-'
     }
   },
   computed: {
-    filteredDate() {
+    filteredData() {
       let startDate = new Date(this.startDate).getTime()
       let endDate = this.endDate.getTime()
       let data = this.orders
@@ -120,7 +114,7 @@ export default {
     }
   },
   watch: {
-    filteredValue: function(value) {
+    searchValue: function(value) {
       this.filters.search.value = value
     }
   }
