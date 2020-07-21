@@ -44,7 +44,7 @@ def get_orders():
         return(str(e))
 
 
-@ app.route("/orders/<id_>", methods=['GET'])
+@app.route("/orders/<id_>", methods=['GET'])
 def get_by_id(id_):
     try:
         order = Orders.query.filter_by(id=id_).first()
@@ -62,7 +62,7 @@ def get_by_id(id_):
 # Fetch data from the MongoDB database and serve on the flask API
 
 
-@ app.route('/customers', methods=['GET'])
+@app.route('/customers', methods=['GET'])
 def get_all_customers():
     try:
         customers = mongo.db.customers
@@ -77,7 +77,7 @@ def get_all_customers():
         return(str(e))
 
 
-@ app.route('/companies', methods=['GET'])
+@app.route('/companies', methods=['GET'])
 def get_all_companies():
     try:
         customers_companies = mongo.db.customers_companies
