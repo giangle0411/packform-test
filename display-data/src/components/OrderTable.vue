@@ -99,7 +99,7 @@ export default {
   computed: {
     filteredData() {
       let startDate = new Date(this.startDate).getTime()
-      let endDate = this.endDate.getTime()
+      let endDate = new Date(this.endDate).getTime()
       let data = this.orders
 
       return _.filter(data, function(val) {
